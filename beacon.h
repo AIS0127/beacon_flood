@@ -35,7 +35,7 @@ typedef struct BeaconFrame{
     uint16_t beacon_interval;
     uint16_t capabilities_info;
 
-    tagged_parameter tag_data;
+    tagged_parameter tag_data[2];
 } __attribute__((__packed__)) BeaconFrame;
 
 

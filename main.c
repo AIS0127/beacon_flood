@@ -18,8 +18,11 @@ void init_packet(packet * pk){
     pk->BeaconFrame.seq_num = 0;
     pk->BeaconFrame.timestamp = 0;
     pk->BeaconFrame.beacon_interval = 0;
-    pk->BeaconFrame.capabilities_info = 0;
-    pk->BeaconFrame.tag_data.num = 0;
+    pk->BeaconFrame.capabilities_info = 0x1411;
+    pk->BeaconFrame.tag_data[0].num = 0;
+    pk->BeaconFrame.tag_data[1].num = 42;
+    pk->BeaconFrame.tag_data[1].len = 1;
+    pk->BeaconFrame.tag_data[1].data[0] = 2;
 
 }
 
@@ -77,17 +80,17 @@ int main(int argc, char* argv[]){
         fgets( tempid, sizeof( tempid), fp);
     }
     
-    memset(send_packet.BeaconFrame.tag_data.data,0,sizeof(send_packet.BeaconFrame.tag_data.data));
-    strcpy(send_packet.BeaconFrame.tag_data.data, tempid);
-    send_packet.BeaconFrame.tag_data.len = strlen(tempid);
-    if(send_packet.BeaconFrame.tag_data.data[send_packet.BeaconFrame.tag_data.len-1]== '\n'){
-        send_packet.BeaconFrame.tag_data.data[send_packet.BeaconFrame.tag_data.len-1]=0;
+    memset(send_packet.BeaconFrame.tag_data,0,sizeof(send_packet.BeaconFrame.tag_data->data)*2);
+    strcpy(send_packet.BeaconFrame.tag_data->data, tempid);
+    send_packet.BeaconFrame.tag_data[0].len = strlen(tempid);
+    if(send_packet.BeaconFrame.tag_data->data[send_packet.BeaconFrame.tag_data->len-1]== '\n'){
+        send_packet.BeaconFrame.tag_data->data[send_packet.BeaconFrame.tag_data->len-1]=0;
     }
     if (pcap_sendpacket(pcap, (unsigned char*)&send_packet, sizeof(send_packet)) != 0){
             printf("Fail send_packet\n");
             exit (-1);
     }
-    printf("%02X:%02X:%02X:%02X:%02X:%02X : %s\n",send_packet.BeaconFrame.src_mac[0],send_packet.BeaconFrame.src_mac[1],send_packet.BeaconFrame.src_mac[2],send_packet.BeaconFrame.src_mac[3],send_packet.BeaconFrame.src_mac[4],send_packet.BeaconFrame.src_mac[5],send_packet.BeaconFrame.tag_data.data);
+    printf("%02X:%02X:%02X:%02X:%02X:%02X : %s\n",send_packet.BeaconFrame.src_mac[0],send_packet.BeaconFrame.src_mac[1],send_packet.BeaconFrame.src_mac[2],send_packet.BeaconFrame.src_mac[3],send_packet.BeaconFrame.src_mac[4],send_packet.BeaconFrame.src_mac[5],send_packet.BeaconFrame.tag_data[0].data);
     sleep(0.7);
     }
 
